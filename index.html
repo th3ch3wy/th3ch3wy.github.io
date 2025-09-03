@@ -3,230 +3,84 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Chuyue Zhang — CS180 Portfolio</title>
-  <meta name="description" content="Projects and notes for CS180 (Computer Vision) — Chuyue Zhang" />
+  <title>CS180 Projects — Chuyue Zhang</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
   <style>
-    :root{
-      --bg: #0b0c10;
-      --panel: #111318;
-      --text: #e6e6e6;
-      --muted: #a8b3cf;
-      --brand: #6ea8fe;
-      --accent: #7ef0e3;
-      --border: #1b1f2a;
-      --ring: #2b354f;
-    }
-    @media (prefers-color-scheme: light){
-      :root{
-        --bg:#f7f8fb; --panel:#ffffff; --text:#0f172a; --muted:#475569; --brand:#355cff; --accent:#00b3a4; --border:#e5e7eb; --ring:#dbe1ff;
-      }
-    }
+    :root{--bg:#0b0c10;--panel:#111318;--text:#e6e6e6;--muted:#a8b3cf;--brand:#6ea8fe;--accent:#7ef0e3;--border:#1b1f2a;--ring:#2b354f}
+    @media (prefers-color-scheme: light){:root{--bg:#f7f8fb;--panel:#fff;--text:#0f172a;--muted:#475569;--brand:#355cff;--accent:#00b3a4;--border:#e5e7eb;--ring:#dbe1ff}}
     *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-      color:var(--text); background:radial-gradient(1200px 600px at 80% -10%, var(--ring), transparent 40%), var(--bg);
-      line-height:1.6;
-    }
-    a{color:inherit; text-decoration:none}
-    .container{max-width:1100px; margin:0 auto; padding:24px}
-
-    /* Nav */
-    .nav{position:sticky; top:0; backdrop-filter:saturate(1.5) blur(10px); background: color-mix(in oklab, var(--panel) 75%, transparent); border-bottom:1px solid var(--border); z-index:20}
-    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px}
-    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:0.2px}
-    .brand-mark{height:28px; width:28px; display:grid; place-items:center; border-radius:9px; background:linear-gradient(135deg, var(--brand), var(--accent)); color:#0b0c10; font-weight:900}
-    .nav-links{display:flex; gap:18px}
-    .nav-links a{padding:8px 10px; border-radius:10px; color:var(--muted)}
-    .nav-links a:hover{background:var(--border); color:var(--text)}
-
-    /* Hero */
-    .hero{display:grid; grid-template-columns:1.1fr 0.9fr; gap:28px; padding:54px 24px 24px; align-items:center}
-    @media (max-width:900px){.hero{grid-template-columns:1fr;}}
-    .hero-card{background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 86%, transparent), color-mix(in oklab, var(--panel) 92%, transparent)); border:1px solid var(--border); border-radius:18px; padding:28px; box-shadow:0 10px 30px rgba(0,0,0,.15)}
-    .eyebrow{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted)}
-    h1{margin:6px 0 10px; font-size: clamp(26px, 4vw, 40px); line-height:1.15}
-    .lead{color:var(--muted); font-size: clamp(14px, 2.2vw, 18px)}
-    .hero-actions{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
-    .btn{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--border); background:var(--panel); padding:10px 14px; border-radius:12px; font-weight:600}
-    .btn.primary{background:linear-gradient(135deg, var(--brand), var(--accent)); color:#0b0c10; border-color:transparent}
-    .btn:hover{transform:translateY(-1px)}
-
-    /* Section */
-    section{padding:36px 24px}
-    .section-title{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
-    .section-title h2{font-size:22px; margin:0}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
+         background:radial-gradient(1200px 600px at 80% -10%,var(--ring),transparent 40%),var(--bg);line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:800}
+    .brand-mark{height:28px;width:28px;display:grid;place-items:center;border-radius:9px;
+                background:linear-gradient(135deg,var(--brand),var(--accent));color:#0b0c10}
+    .btn{border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600}
+    h1{margin:6px 0 2px}
     .muted{color:var(--muted)}
-
-    /* Projects grid */
-    .grid{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:16px}
-    @media (max-width:1000px){.grid{grid-template-columns: repeat(2, 1fr)}}
-    @media (max-width:640px){.grid{grid-template-columns: 1fr}}
-    .card{position:relative; border:1px solid var(--border); background: color-mix(in oklab, var(--panel) 94%, transparent); border-radius:16px; overflow:hidden}
-    .thumb{aspect-ratio: 16/9; background:linear-gradient(135deg, color-mix(in oklab, var(--brand) 35%, var(--panel)), color-mix(in oklab, var(--accent) 25%, var(--panel))); display:grid; place-items:center; font-weight:800; letter-spacing:.08em; color: #0b0c10}
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+    @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:640px){.grid{grid-template-columns:1fr}}
+    .card{border:1px solid var(--border);background:color-mix(in oklab,var(--panel) 94%,transparent);border-radius:16px;overflow:hidden}
+    .card:hover{outline:2px solid color-mix(in oklab,var(--brand) 40%,transparent);outline-offset:2px}
+    .thumb{aspect-ratio:16/9;display:grid;place-items:center;font-weight:800;letter-spacing:.08em;color:#0b0c10;
+           background:linear-gradient(135deg,color-mix(in oklab,var(--brand) 35%,var(--panel)),
+                                               color-mix(in oklab,var(--accent) 25%,var(--panel)));}
     .content{padding:16px}
-    .kicker{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
-    .title{font-weight:700; margin:6px 0 6px}
-    .desc{color:var(--muted); font-size:14px}
-    .tagrow{display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--border)}
-    .tag{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted)}
-    .card:hover{outline:2px solid color-mix(in oklab, var(--brand) 40%, transparent); outline-offset:2px}
-
-    /* Footer */
-    footer{border-top:1px solid var(--border); padding:26px 24px; color:var(--muted)}
-    .footgrid{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
-    .small{font-size:12px}
+    .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .title{font-weight:700;margin:6px 0 6px}
+    .desc{color:var(--muted);font-size:14px}
+    .tagrow{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--border)}
+    .tag{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
   </style>
 </head>
 <body>
-  <header class="nav">
-    <div class="nav-inner container">
-      <a class="brand" href="#top">
-        <span class="brand-mark">CZ</span>
-        <span>Chuyue Zhang</span>
+  <div class="wrap">
+    <header>
+      <a class="brand" href="/"><span class="brand-mark">CZ</span><span>Chuyue Zhang</span></a>
+      <div style="display:flex;gap:10px;align-items:center">
+        <a class="btn" href="/">Home</a>
+        <!-- If you ever want to link to all repos, keep a subtle link:
+        <a class="btn" href="https://github.com/th3ch3wy?tab=repositories" target="_blank" rel="noreferrer">All Repos ↗</a> -->
+      </div>
+    </header>
+
+    <h1>CS180 Projects</h1>
+    <p class="muted">Curated coursework projects. Only Project 0 is listed now; add future CS180 work here.</p>
+
+    <div class="grid">
+      <!-- Project 0 -->
+      <a class="card" href="/0/index.html">
+        <div class="thumb">P0</div>
+        <div class="content">
+          <div class="kicker">CS180</div>
+          <div class="title">Project 0 — Getting Started</div>
+          <p class="desc">Spec setup + sanity checks. Write-up with images/GIFs and notes.</p>
+        </div>
+        <div class="tagrow">
+          <span class="tag">Setup</span><span class="tag">Python</span><span class="tag">Environment</span>
+        </div>
       </a>
-      <nav class="nav-links">
-        <a href="#about">About</a>
-        <a href="/projects/">Projects</a>
-        <a href="#contact">Contact</a>
-        <a class="btn" href="https://github.com/th3ch3wy" target="_blank" rel="noreferrer">GitHub</a>
-      </nav>
+
+      <!-- TEMPLATE (duplicate and edit for each new CS180 project) -->
+      <!--
+      <a class="card" href="/1/index.html">
+        <div class="thumb">P1</div>
+        <div class="content">
+          <div class="kicker">CS180</div>
+          <div class="title">Project 1 — Title</div>
+          <p class="desc">One-line summary of what you built and show.</p>
+        </div>
+        <div class="tagrow">
+          <span class="tag">NumPy</span><span class="tag">Image Ops</span><span class="tag">Write-up</span>
+        </div>
+      </a>
+      -->
     </div>
-  </header>
-
-  <main id="top" class="container">
-    <!-- Hero -->
-    <section class="hero">
-      <div class="hero-card">
-        <div class="eyebrow">CS180 • Computer Vision</div>
-        <h1>Welcome to my portfolio</h1>
-        <p class="lead">I’m documenting my projects, notes, and experiments. Each project page includes write‑ups, qualitative results, and code links. Built fast & minimal for the web.</p>
-        <div class="hero-actions">
-          <a class="btn primary" href="/projects/">View projects</a>
-          <a class="btn" href="./0/index.html">Open Project&nbsp;0</a>
-        </div>
-      </div>
-      <div class="hero-card">
-        <h3 style="margin-top:0">Highlights</h3>
-        <ul style="margin:0; padding-left:18px">
-          <li>Clean, responsive layout with dark/light auto‑theme</li>
-          <li>Project cards for quick scanning</li>
-          <li>Accessible colors & keyboard‑friendly navigation</li>
-          <li>Easy to extend—just add a folder and link it below</li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- About -->
-    <section id="about">
-      <div class="section-title">
-        <h2>About</h2>
-        <span class="muted">Who I am & what I’m exploring</span>
-      </div>
-      <div class="hero-card" style="display:grid; grid-template-columns:1fr 2fr; gap:18px">
-        <div>
-          <div class="thumb" aria-hidden="true">CV</div>
-        </div>
-        <div>
-          <p>Hi! I’m Chuyue (Ch‑yue). I’m interested in <strong>computer vision</strong>, <strong>ML systems</strong>, and <strong>human‑centered tooling</strong>. This site aggregates coursework and independent explorations for CS180.</p>
-          <p class="muted small">Tip: replace this copy with your own quick bio and one or two links (e.g., résumé, LinkedIn).</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Projects -->
-    <section id="projects">
-      <div class="section-title">
-        <h2>Projects</h2>
-        <a class="small muted" href="https://github.com/th3ch3wy/th3ch3wy.github.io" target="_blank" rel="noreferrer">Site source ↗</a>
-      </div>
-      <div class="grid">
-        <!-- Project 0 (new) -->
-        <a class="card" href="./0/index.html">
-          <div class="thumb">P0</div>
-          <div class="content">
-            <div class="kicker">New</div>
-            <div class="title">Project 0 — Getting Started</div>
-            <p class="desc">Based on the CS180 FA25 Project 0 spec. Write‑up with setup notes, images, and GIF results.</p>
-          </div>
-          <div class="tagrow">
-            <span class="tag">Setup</span>
-            <span class="tag">Python</span>
-            <span class="tag">Environment</span>
-          </div>
-        </a>
-        <!-- Project 1 (existing) -->
-        <a class="card" href="./1/index.html">
-          <div class="thumb">P1</div>
-          <div class="content">
-            <div class="kicker">Starter</div>
-            <div class="title">Project 1</div>
-            <p class="desc">Skeleton page set up in <code>/1/index.html</code>. Replace this with the project title, a one‑line summary, and a hero image.</p>
-          </div>
-          <div class="tagrow">
-            <span class="tag">Python</span>
-            <span class="tag">NumPy</span>
-            <span class="tag">Image Ops</span>
-          </div>
-        </a>
-
-        <!-- Example card: duplicate & edit for new projects -->
-        <a class="card" href="./2/index.html">
-          <div class="thumb">P2</div>
-          <div class="content">
-            <div class="kicker">Example</div>
-            <div class="title">Edge Detection</div>
-            <p class="desc">Canny pipeline: smoothing, gradients, non‑max suppression, double threshold, hysteresis.</p>
-          </div>
-          <div class="tagrow">
-            <span class="tag">Canny</span>
-            <span class="tag">OpenCV</span>
-            <span class="tag">Filters</span>
-          </div>
-        </a>
-
-        <a class="card" href="./3/index.html">
-          <div class="thumb">P3</div>
-          <div class="content">
-            <div class="kicker">Example</div>
-            <div class="title">Feature Matching</div>
-            <p class="desc">SIFT/ORB comparison and RANSAC homography for panorama stitching.</p>
-          </div>
-          <div class="tagrow">
-            <span class="tag">SIFT</span>
-            <span class="tag">RANSAC</span>
-            <span class="tag">Panorama</span>
-          </div>
-        </a>
-      </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact">
-      <div class="section-title">
-        <h2>Contact</h2>
-        <span class="muted">Say hi or report an issue</span>
-      </div>
-      <div class="hero-card">
-        <p>Best way to reach me: <a href="mailto:chuyue.zhang@berkeley.edu">chuyue.zhang@berkeley.edu</a> · GitHub DMs also work.</p>
-        <p class="small muted">Optional: add a simple mailto form or a link to an issue template in a class repo.</p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="container footgrid">
-      <div class="small">© <span id="y"></span> Chuyue Zhang</div>
-      <div class="small">Built with vanilla HTML/CSS • Auto dark/light • Accessible</div>
-    </div>
-  </footer>
-
-  <script>
-    // tiny enhancement: current year
-    document.getElementById('y').textContent = new Date().getFullYear();
-  </script>
+  </div>
 </body>
 </html>
