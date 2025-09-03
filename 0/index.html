@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project 0 — Getting Started | Chuyue Zhang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#0b0c10;--panel:#111318;--text:#e6e6e6;--muted:#a8b3cf;--brand:#6ea8fe;--accent:#7ef0e3;--border:#1b1f2a;--ring:#2b354f}
+    @media (prefers-color-scheme: light){:root{--bg:#f7f8fb;--panel:#fff;--text:#0f172a;--muted:#475569;--brand:#355cff;--accent:#00b3a4;--border:#e5e7eb;--ring:#dbe1ff}}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);background:radial-gradient(1200px 600px at 80% -10%,var(--ring),transparent 40%),var(--bg);line-height:1.6}
+    a{color:inherit}
+    .wrap{max-width:900px;margin:0 auto;padding:24px}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px}
+    .btn{border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600;text-decoration:none}
+    h1{margin:14px 0 6px} .muted{color:var(--muted)} code{background:color-mix(in oklab,var(--panel) 96%,transparent);border:1px solid var(--border);padding:2px 6px;border-radius:6px}
+    .callout{border:1px dashed var(--border);padding:12px;border-radius:12px;background:color-mix(in oklab,var(--panel) 92%,transparent)}
+    figure{margin:18px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:color-mix(in oklab,var(--panel) 94%,transparent)}
+    figure img{display:block;width:100%;height:auto}
+    figcaption{padding:10px 12px;color:var(--muted);font-size:14px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:720px){.grid2{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="btn" href="/">← Home</a>
+      <a class="btn" href="/projects/">All Repos</a>
+    </header>
+
+    <h1>Project 0 — Getting Started</h1>
+    <p class="muted">
+      Spec: <a href="https://cal-cs180.github.io/fa25/hw/proj0/index.html" target="_blank" rel="noreferrer">FA25 Project 0</a>
+    </p>
+
+    <div class="callout">
+      <strong>Overview.</strong> A brief description of what you implemented and verified for Project 0. Mention environment setup, any helper scripts, and how you validated results.
+    </div>
+
+    <h2>Setup</h2>
+    <ul>
+      <li>Python version / packages (e.g., <code>numpy</code>, <code>matplotlib</code>, <code>opencv-python</code>).</li>
+      <li>How to run: <code>python main.py --input assets/proj0/input.png</code></li>
+      <li>Repo (if separate): <a href="https://github.com/th3ch3wy/CS180-proj0">github.com/th3ch3wy/CS180-proj0</a> (update this link).</li>
+    </ul>
+
+    <h2>Results</h2>
+    <figure>
+      <img src="/assets/proj0/demo.gif" alt="Demo GIF of the pipeline running on sample image">
+      <figcaption>Figure 1. End-to-end demo (replace with your <code>.gif</code>).</figcaption>
+    </figure>
+
+    <div class="grid2">
+      <figure>
+        <img src="/assets/proj0/input.jpg" alt="Input image">
+        <figcaption>Input image (original).</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/proj0/output.jpg" alt="Output image">
+        <figcaption>Output after your code (explain the transformation briefly).</figcaption>
+      </figure>
+    </div>
+
+    <h2>Notes & Learnings</h2>
+    <ul>
+      <li>Any tricky bits you ran into or fixed.</li>
+      <li>Performance or numerical gotchas (dtype, ranges, etc.).</li>
+      <li>What you plan to improve for future projects.</li>
+    </ul>
+
+    <h2>Appendix</h2>
+    <p>Extra comparisons, ablations, or CLI flags.</p>
+  </div>
+</body>
+</html>
