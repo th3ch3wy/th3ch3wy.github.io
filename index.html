@@ -90,7 +90,7 @@
       </a>
       <nav class="nav-links">
         <a href="#about">About</a>
-        <a href="#projects">Projects</a>
+        <a href="/projects/">Projects</a>
         <a href="#contact">Contact</a>
         <a class="btn" href="https://github.com/th3ch3wy" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
@@ -105,9 +105,128 @@
         <h1>Welcome to my portfolio</h1>
         <p class="lead">I’m documenting my projects, notes, and experiments. Each project page includes write‑ups, qualitative results, and code links. Built fast & minimal for the web.</p>
         <div class="hero-actions">
-          <a class="btn primary" href="#projects">View projects</a>
-          <a class="btn" href="./1/index.html">Open Project 1</a>
+          <a class="btn primary" href="/projects/">View projects</a>
+          <a class="btn" href="./0/index.html">Open Project&nbsp;0</a>
         </div>
       </div>
       <div class="hero-card">
         <h3 style="margin-top:0">Highlights</h3>
+        <ul style="margin:0; padding-left:18px">
+          <li>Clean, responsive layout with dark/light auto‑theme</li>
+          <li>Project cards for quick scanning</li>
+          <li>Accessible colors & keyboard‑friendly navigation</li>
+          <li>Easy to extend—just add a folder and link it below</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section id="about">
+      <div class="section-title">
+        <h2>About</h2>
+        <span class="muted">Who I am & what I’m exploring</span>
+      </div>
+      <div class="hero-card" style="display:grid; grid-template-columns:1fr 2fr; gap:18px">
+        <div>
+          <div class="thumb" aria-hidden="true">CV</div>
+        </div>
+        <div>
+          <p>Hi! I’m Chuyue (Ch‑yue). I’m interested in <strong>computer vision</strong>, <strong>ML systems</strong>, and <strong>human‑centered tooling</strong>. This site aggregates coursework and independent explorations for CS180.</p>
+          <p class="muted small">Tip: replace this copy with your own quick bio and one or two links (e.g., résumé, LinkedIn).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects -->
+    <section id="projects">
+      <div class="section-title">
+        <h2>Projects</h2>
+        <a class="small muted" href="https://github.com/th3ch3wy/th3ch3wy.github.io" target="_blank" rel="noreferrer">Site source ↗</a>
+      </div>
+      <div class="grid">
+        <!-- Project 0 (new) -->
+        <a class="card" href="./0/index.html">
+          <div class="thumb">P0</div>
+          <div class="content">
+            <div class="kicker">New</div>
+            <div class="title">Project 0 — Getting Started</div>
+            <p class="desc">Based on the CS180 FA25 Project 0 spec. Write‑up with setup notes, images, and GIF results.</p>
+          </div>
+          <div class="tagrow">
+            <span class="tag">Setup</span>
+            <span class="tag">Python</span>
+            <span class="tag">Environment</span>
+          </div>
+        </a>
+        <!-- Project 1 (existing) -->
+        <a class="card" href="./1/index.html">
+          <div class="thumb">P1</div>
+          <div class="content">
+            <div class="kicker">Starter</div>
+            <div class="title">Project 1</div>
+            <p class="desc">Skeleton page set up in <code>/1/index.html</code>. Replace this with the project title, a one‑line summary, and a hero image.</p>
+          </div>
+          <div class="tagrow">
+            <span class="tag">Python</span>
+            <span class="tag">NumPy</span>
+            <span class="tag">Image Ops</span>
+          </div>
+        </a>
+
+        <!-- Example card: duplicate & edit for new projects -->
+        <a class="card" href="./2/index.html">
+          <div class="thumb">P2</div>
+          <div class="content">
+            <div class="kicker">Example</div>
+            <div class="title">Edge Detection</div>
+            <p class="desc">Canny pipeline: smoothing, gradients, non‑max suppression, double threshold, hysteresis.</p>
+          </div>
+          <div class="tagrow">
+            <span class="tag">Canny</span>
+            <span class="tag">OpenCV</span>
+            <span class="tag">Filters</span>
+          </div>
+        </a>
+
+        <a class="card" href="./3/index.html">
+          <div class="thumb">P3</div>
+          <div class="content">
+            <div class="kicker">Example</div>
+            <div class="title">Feature Matching</div>
+            <p class="desc">SIFT/ORB comparison and RANSAC homography for panorama stitching.</p>
+          </div>
+          <div class="tagrow">
+            <span class="tag">SIFT</span>
+            <span class="tag">RANSAC</span>
+            <span class="tag">Panorama</span>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section id="contact">
+      <div class="section-title">
+        <h2>Contact</h2>
+        <span class="muted">Say hi or report an issue</span>
+      </div>
+      <div class="hero-card">
+        <p>Best way to reach me: <a href="mailto:chuyue.zhang@berkeley.edu">chuyue.zhang@berkeley.edu</a> · GitHub DMs also work.</p>
+        <p class="small muted">Optional: add a simple mailto form or a link to an issue template in a class repo.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container footgrid">
+      <div class="small">© <span id="y"></span> Chuyue Zhang</div>
+      <div class="small">Built with vanilla HTML/CSS • Auto dark/light • Accessible</div>
+    </div>
+  </footer>
+
+  <script>
+    // tiny enhancement: current year
+    document.getElementById('y').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
