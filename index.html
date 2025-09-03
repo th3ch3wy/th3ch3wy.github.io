@@ -1,16 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>My Portfolio</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Chuyue Zhang — CS180 Portfolio</title>
+  <meta name="description" content="Projects and notes for CS180 (Computer Vision) — Chuyue Zhang" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg: #0b0c10;
+      --panel: #111318;
+      --text: #e6e6e6;
+      --muted: #a8b3cf;
+      --brand: #6ea8fe;
+      --accent: #7ef0e3;
+      --border: #1b1f2a;
+      --ring: #2b354f;
+    }
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg:#f7f8fb; --panel:#ffffff; --text:#0f172a; --muted:#475569; --brand:#355cff; --accent:#00b3a4; --border:#e5e7eb; --ring:#dbe1ff;
+      }
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color:var(--text); background:radial-gradient(1200px 600px at 80% -10%, var(--ring), transparent 40%), var(--bg);
+      line-height:1.6;
+    }
+    a{color:inherit; text-decoration:none}
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+
+    /* Nav */
+    .nav{position:sticky; top:0; backdrop-filter:saturate(1.5) blur(10px); background: color-mix(in oklab, var(--panel) 75%, transparent); border-bottom:1px solid var(--border); z-index:20}
+    .nav-inner{display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 24px}
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:0.2px}
+    .brand-mark{height:28px; width:28px; display:grid; place-items:center; border-radius:9px; background:linear-gradient(135deg, var(--brand), var(--accent)); color:#0b0c10; font-weight:900}
+    .nav-links{display:flex; gap:18px}
+    .nav-links a{padding:8px 10px; border-radius:10px; color:var(--muted)}
+    .nav-links a:hover{background:var(--border); color:var(--text)}
+
+    /* Hero */
+    .hero{display:grid; grid-template-columns:1.1fr 0.9fr; gap:28px; padding:54px 24px 24px; align-items:center}
+    @media (max-width:900px){.hero{grid-template-columns:1fr;}}
+    .hero-card{background:linear-gradient(180deg, color-mix(in oklab, var(--panel) 86%, transparent), color-mix(in oklab, var(--panel) 92%, transparent)); border:1px solid var(--border); border-radius:18px; padding:28px; box-shadow:0 10px 30px rgba(0,0,0,.15)}
+    .eyebrow{font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--muted)}
+    h1{margin:6px 0 10px; font-size: clamp(26px, 4vw, 40px); line-height:1.15}
+    .lead{color:var(--muted); font-size: clamp(14px, 2.2vw, 18px)}
+    .hero-actions{display:flex; gap:12px; margin-top:18px; flex-wrap:wrap}
+    .btn{display:inline-flex; align-items:center; gap:10px; border:1px solid var(--border); background:var(--panel); padding:10px 14px; border-radius:12px; font-weight:600}
+    .btn.primary{background:linear-gradient(135deg, var(--brand), var(--accent)); color:#0b0c10; border-color:transparent}
+    .btn:hover{transform:translateY(-1px)}
+
+    /* Section */
+    section{padding:36px 24px}
+    .section-title{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px}
+    .section-title h2{font-size:22px; margin:0}
+    .muted{color:var(--muted)}
+
+    /* Projects grid */
+    .grid{display:grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap:16px}
+    @media (max-width:1000px){.grid{grid-template-columns: repeat(2, 1fr)}}
+    @media (max-width:640px){.grid{grid-template-columns: 1fr}}
+    .card{position:relative; border:1px solid var(--border); background: color-mix(in oklab, var(--panel) 94%, transparent); border-radius:16px; overflow:hidden}
+    .thumb{aspect-ratio: 16/9; background:linear-gradient(135deg, color-mix(in oklab, var(--brand) 35%, var(--panel)), color-mix(in oklab, var(--accent) 25%, var(--panel))); display:grid; place-items:center; font-weight:800; letter-spacing:.08em; color: #0b0c10}
+    .content{padding:16px}
+    .kicker{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
+    .title{font-weight:700; margin:6px 0 6px}
+    .desc{color:var(--muted); font-size:14px}
+    .tagrow{display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px; border-top:1px solid var(--border)}
+    .tag{font-size:12px; padding:4px 8px; border-radius:999px; border:1px solid var(--border); color:var(--muted)}
+    .card:hover{outline:2px solid color-mix(in oklab, var(--brand) 40%, transparent); outline-offset:2px}
+
+    /* Footer */
+    footer{border-top:1px solid var(--border); padding:26px 24px; color:var(--muted)}
+    .footgrid{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap}
+    .small{font-size:12px}
+  </style>
 </head>
 <body>
-    <h1>Welcome to My CS180 Portfolio!</h1>
-    <a href="./1/index.html">Project 1</a>
-</body>
-</html>
+  <header class="nav">
+    <div class="nav-inner container">
+      <a class="brand" href="#top">
+        <span class="brand-mark">CZ</span>
+        <span>Chuyue Zhang</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#about">About</a>
+        <a href="#projects">Projects</a>
+        <a href="#contact">Contact</a>
+        <a class="btn" href="https://github.com/th3ch3wy" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top" class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">CS180 • Computer Vision</div>
+        <h1>Welcome to my portfolio</h1>
+        <p class="lead">I’m documenting my projects, notes, and experiments. Each project page includes write‑ups, qualitative results, and code links. Built fast & minimal for the web.</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="#projects">View projects</a>
+          <a class="btn" href="./1/index.html">Open Project 1</a>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3 style="margin-top:0">Highlights</h3>
