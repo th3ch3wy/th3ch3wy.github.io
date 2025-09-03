@@ -20,9 +20,12 @@
     .btn{border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600}
     h1{margin:14px 0 6px}
     .muted{color:var(--muted)}
-    .callout{border:1px dashed var(--border);padding:12px;border-radius:12px;background:color-mix(in oklab,var(--panel) 92%,transparent)}
-    figure{margin:18px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:color-mix(in oklab,var(--panel) 94%,transparent)}
-    figure img, figure video{display:block;width:100%;height:auto}
+    nav.toc{margin:14px 0;display:flex;flex-wrap:wrap;gap:8px}
+    nav.toc a{border:1px solid var(--border);background:var(--panel);padding:6px 10px;border-radius:999px;font-size:14px}
+    .part{margin-top:22px;padding-top:8px;border-top:1px solid var(--border)}
+    .part h2{margin:12px 0 6px}
+    figure{margin:14px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:color-mix(in oklab,var(--panel) 94%,transparent)}
+    figure img,figure video{display:block;width:100%;height:auto}
     figcaption{padding:10px 12px;color:var(--muted);font-size:14px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media(max-width:720px){.grid2{grid-template-columns:1fr}}
@@ -38,45 +41,54 @@
     <h1>Project 0 — Getting Started</h1>
     <p class="muted">Spec: <a href="https://cal-cs180.github.io/fa25/hw/proj0/index.html" target="_blank" rel="noreferrer">FA25 Project 0</a></p>
 
-    <div class="callout">
-      <strong>Overview.</strong> This page shows my Project&nbsp;0 environment check and example media outputs. I verified my toolchain (Python/NumPy/Matplotlib/OpenCV) and ensured I can render images/GIFs for future write‑ups.
-    </div>
+    <nav class="toc" aria-label="Table of contents">
+      <a href="#part1">Part 1 — Selfies</a>
+      <a href="#part2">Part 2 — Buildings</a>
+      <a href="#part3">Part 3 — Animation</a>
+    </nav>
 
-    <h2>Demo</h2>
-    <figure>
-      <img src="howie_sleep2.gif" alt="Animated GIF demo used for Project 0" />
-      <figcaption>Figure&nbsp;1. Demo GIF (<code>howie_sleep2.gif</code>) embedded successfully.</figcaption>
-    </figure>
+    <section id="part1" class="part">
+      <h2>Part 1 — Selfies</h2>
+      <p class="muted">Two images demonstrating the required capture/embedding for the selfie portion of the spec.</p>
+      <p>Here is the selfie I took in the morning when I just woke up.</p>
+      <div class="grid2">
+        <figure>
+          <img src="selfie-far.jpg" alt="Selfie (far)">
+          <figcaption>Figure 1. <code>selfie-far.jpg</code> — far.</figcaption>
+        </figure>
+        <figure>
+          <img src="selfie_close.jpg" alt="Selfie (close)">
+          <figcaption>Figure 2. <code>selfie_close.jpg</code> — close.</figcaption>
+        </figure>
+      </div>
+    </section>
 
-    <h2>Sample Images</h2>
-    <div class="grid2">
-      <figure>
-        <img src="building%20far.jpg" alt="Building (far view)">
-        <figcaption>Figure&nbsp;2. <code>building far.jpg</code> — far view.</figcaption>
-      </figure>
-      <figure>
-        <img src="building%20close.jpg" alt="Building (close view)">
-        <figcaption>Figure&nbsp;3. <code>building close.jpg</code> — close view.</figcaption>
-      </figure>
-    </div>
+    <section id="part2" class="part">
+      <h2>Part 2 — Buildings</h2>
+      <p class="muted">Two scale/pose variations for a static scene, as suggested by the instructions.</p>
+      <p>This is the campus building by the Upper Sproul Fountain.</p>
+      <div class="grid2">
+        <figure>
+          <img src="building%20far.jpg" alt="Building (far view)">
+          <figcaption>Figure 3. <code>building far.jpg</code> — far view.</figcaption>
+        </figure>
+        <figure>
+          <img src="building%20close.jpg" alt="Building (close view)">
+          <figcaption>Figure 4. <code>building close.jpg</code> — close view.</figcaption>
+        </figure>
+      </div>
+    </section>
 
-    <div class="grid2">
+    <section id="part3" class="part">
+      <h2>Part 3 — Animation</h2>
+      <p class="muted">Embedded GIF to confirm animation/media rendering in the report.</p>
+      <p>This is my roommate's cat Howie sleeping on a cat tree. I figured it'd be better to use a real animal than a stuffed animal for the dolly shot :D</p>
       <figure>
-        <img src="selfie-far.jpg" alt="Selfie (far)">
-        <figcaption>Figure&nbsp;4. <code>selfie-far.jpg</code> — far.</figcaption>
+        <img src="howie_sleep2.gif" alt="Animated GIF demo (howie_sleep2)">
+        <figcaption>Figure 5. <code>howie_sleep2.gif</code> — animation renders inline.</figcaption>
       </figure>
-      <figure>
-        <img src="selfie_close.jpg" alt="Selfie (close)">
-        <figcaption>Figure&nbsp;5. <code>selfie_close.jpg</code> — close.</figcaption>
-      </figure>
-    </div>
+    </section>
 
-    <h2>Notes</h2>
-    <ul>
-      <li>All media are placed in the same folder as this page (<code>/0/</code>) for simple relative paths.</li>
-      <li>Filenames with spaces (e.g., <code>building far.jpg</code>) are URL‑encoded as <code>building%20far.jpg</code> in <code>src</code> attributes.</li>
-      <li>To add more figures, duplicate a <code>&lt;figure&gt;</code> block and update the <code>src</code> and caption.</li>
-    </ul>
   </div>
 </body>
 </html>
