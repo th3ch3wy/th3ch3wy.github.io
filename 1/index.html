@@ -22,7 +22,6 @@
     .muted{color:var(--muted)}
     .callout{border:1px dashed var(--border);padding:12px;border-radius:12px;background:color-mix(in oklab,var(--panel) 92%,transparent);margin:10px 0}
 
-    /* sections */
     section{margin-top:20px}
     .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
 
@@ -33,6 +32,19 @@
     figure{margin:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:color-mix(in oklab,var(--panel) 94%,transparent)}
     figure img{display:block;width:100%;height:auto;cursor:pointer}
     figcaption{padding:10px 12px;color:var(--muted);font-size:14px}
+
+    /* comparison section */
+    .pairs{display:grid;grid-template-columns:1fr;gap:24px}
+    .pair{display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap}
+    .pair .imgs{display:flex;gap:12px;flex:1 1 520px;min-width:280px;flex-wrap:wrap}
+    .pair .imgs img {
+      max-height: 500px; /* or any cap you like */
+      height: auto;
+      width: auto;
+    }
+    .pair .meta{min-width:260px;border:1px solid var(--border);border-radius:10px;
+                background:color-mix(in oklab,var(--panel) 92%,transparent);padding:12px}
+    .pill{display:inline-block;padding:2px 8px;border:1px solid var(--border);border-radius:999px;font-size:12px;color:var(--muted);margin-right:6px}
 
     /* lightbox */
     #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
@@ -47,20 +59,96 @@
     </header>
 
     <h1>Project 1 — Colorizing Prokudin–Gorskii</h1>
-    <p class="muted">Selected colorized results exported to <code>/1/output/</code>.</p>
-
     <section id="overview">
       <div class="callout">
-        <strong>Overview.</strong> Colorized historical glass-plate scans by aligning B/G channels to R and composing an RGB image. (Pyramid alignment + simple border crop.)
+        <strong>Overview.</strong> Colorized historical glass-plate scans by aligning B/G channels to R and composing an RGB image.
       </div>
     </section>
 
+    <!-- NEW: before/after comparison section -->
+    <section id="comparisons">
+      <div class="section-title"><h2>Before & After Demo (Single Scale)</h2></div>
+      <div class="pairs">
+
+        <!-- Monastery first -->
+        <div class="pair">
+          <div class="imgs">
+            <img src="source/monastery medium.jpg" alt="Monastery (before, medium)" />
+            <img src="source/monastery.jpg" alt="Monastery (after, colorized)" />
+          </div>
+          <div class="meta">
+            <div class="pill">Single Scale Alignment</div>
+            <p>
+              I implemented the single scale alignment method using ssd + cropping, by iterating through the all the possible coordinates in the search radius, cropping around 10% of the outer pixels (this is needed because cropping avoids border artifacts dominating the score.), then take the L2 norm between the pixel information at cropped reference B channel and the aligning channel at each shift as the similarity score between the two image objects (the lower the score the better), and use the shifed R/G channel image by the dx & dy that gives the lowest L2 norm stacking on top of the reference B channel to produce the colorized image.
+            </p>
+          </div>
+        </div>
+
+        <!-- Emir second -->
+        <div class="pair">
+          <div class="imgs">
+            <img src="source/emir medium.jpeg" alt="Emir (before, medium)" />
+            <img src="source/emir native.jpg" alt="Emir (after, colorized)" />
+          </div>
+          <div class="meta">
+            <div class="pill">Unsatisfactory result for Larger Images</div>
+            <p>
+              The Single Alignment method did not provide promising result for tif type image files and takes very long time to compute (around 3 minutes on my laptop). My theory is that the large image pixel vector L2 norm is (non-liniearly) harder to calculate as the vector gets bigger, and the reason why the alignment did not work as intended on the Emir image is because the best alignment method is beyond our default search radius of 15 pixels. This drives the need for a better and more efficient method to align image which is using the image pyramid method.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="comparisons">
+      <div class="section-title"><h2>Before & After Demo (Multiple Scale)</h2></div>
+      <div class="pairs">
+
+        <!-- Emir second -->
+        <div class="pair">
+          <div class="imgs">
+            <img src="source/emir medium.jpeg" alt="Emir (before, medium)" />
+            <img src="source/emir pyramid.jpg" alt="Emir (after, colorized)" />
+          </div>
+          <div class="meta">
+            <div class="pill">Better result with native pyramid alignment</div>
+            <p>
+              To make a better alignment function, the first step would be to sample/downscale the image so that we can shrink the image to be processed in a timely manner. This way we can get a general coordinates of the ideal shift, then we move on to a lesser downscaled version, with the coordinates we got from the base level (multiplied to adjust to the undo of downscaling), then do the same alignment but with a much smaller search radius to fine tune, this way the computational work is still managable. then we recursively perform this step until we reach the original image size. As you can see in the demo, the image quality is way better but still have room for improvements.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="comparisons">
+      <div class="section-title"><h2>Before & After Demo (Multiple Scale + Canny)</h2></div>
+      <div class="pairs">
+
+        <!-- Emir second -->
+        <div class="pair">
+          <div class="imgs">
+            <img src="source/emir medium.jpeg" alt="Emir (before, medium)" />
+            <img src="source/emir.jpg" alt="Emir (after, colorized)" />
+          </div>
+          <div class="meta">
+            <div class="pill">Edge alignment</div>
+            <p>
+              The last step I added was edge detection. By running Canny on both channels before alignment, the algorithm matches structural edges rather than raw intensities. This improves on the native pyramid approach because raw pixel values can differ a lot across channels (exposure, brightness, or contrast shifts), which misleads SSD/NCC. Edges are invariant to those differences — they highlight boundaries of objects that are consistent across all channels. Using edges at the coarse pyramid levels made the search more reliable, while refinement at higher levels still preserved detail.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Existing results grid -->
     <section id="results">
       <div class="section-title"><h2>Results</h2></div>
       <div id="gallery" class="grid" aria-live="polite"></div>
     </section>
 
-    <!-- Optional notes block you can edit later -->
     <section id="notes">
       <div class="section-title"><h2>Notes</h2></div>
       <ul class="muted">
@@ -70,7 +158,7 @@
     </section>
   </div>
 
-  <!-- simple lightbox -->
+  <!-- lightbox -->
   <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
     <div>
       <img id="lbimg" alt="Expanded view" />
@@ -94,7 +182,26 @@
       'siren.jpg',
       'three_generations.jpg',
       'tobolsk.jpg',
+      'cotton mil.jpg'
     ];
+    const offsets = {
+      "cathedral.jpg": [[2, 5], [3, 12]],
+      "church.jpg": [[4, 25], [282, 62]],
+      "emir.jpg": [[23, 49], [40, 107]],
+      "harvesters.jpg": [[15, 123], [18, 60]],
+      "icon.jpg": [[16, 38], [22, 90]],
+      "italil.jpg": [[22, 40], [36, 77]],
+      "lastochikino.jpg": [[-9, 76], [-2, -3]],
+      "lugano.jpg": [[-29, 93], [-17, 41]],
+      "melons.jpg": [[9, 79], [14, 177]],
+      "monastery.jpg": [[2, -3], [2, 3]],
+      "self_portrait.jpg": [[29, 77], [37, 175]],
+      "siren.jpg": [[-23, 96], [-8, 49]],
+      "three_generations.jpg": [[8, 111], [17, 58]],
+      "tobolsk.jpg": [[3, 3], [3, 6]],
+      "cotton mil.jpg": [[29, 65],[33, 131]],
+    };
+
 
     function toTitle(fn){
       const name = fn.replace(/\.jpg$/i,'').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -102,23 +209,34 @@
     }
 
     const g = document.getElementById('gallery');
-    g.innerHTML = images.map(f => `
-      <figure>
-        <img src="output/${f}" alt="${toTitle(f)}" data-file="${f}" />
-        <figcaption>${toTitle(f)}</figcaption>
-      </figure>
-    `).join('');
+    g.innerHTML = images.map(f => {
+  const title = toTitle(f);
+  const off = offsets[f] ? 
+    `<div class="muted" style="font-size:13px;margin-top:4px">
+       Offsets: ${JSON.stringify(offsets[f])}
+     </div>` 
+    : "";
+  return `
+    <figure>
+      <img src="source/${f}" alt="${title}" data-file="${f}" />
+      <figcaption>
+        ${title}
+        ${off}
+      </figcaption>
+    </figure>
+  `;
+}).join('');
 
-    // lightbox
+
     const lb = document.getElementById('lightbox');
     const lbimg = document.getElementById('lbimg');
     const lbcap = document.getElementById('lbcap');
 
-    g.addEventListener('click', (e) => {
+    document.body.addEventListener('click', (e) => {
       const img = e.target.closest('img');
       if(!img) return;
       lbimg.src = img.src;
-      lbcap.textContent = img.alt;
+      lbcap.textContent = img.alt || '';
       lb.style.display = 'flex';
     });
 
