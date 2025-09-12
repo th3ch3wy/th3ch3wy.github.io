@@ -17,54 +17,46 @@
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
     header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0}
     .brand{display:flex;gap:10px;align-items:center;font-weight:800}
-    .brand-mark{height:28px;width:28px;display:grid;place-items:center;border-radius:9px;
-                background:linear-gradient(135deg,var(--brand),var(--accent));color:#0b0c10}
+    .brand-mark{height:28px;width:28px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--accent));color:#0b0c10}
     .btn{border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600}
     h1{margin:6px 0 2px}
-    .muted{color:var(--muted)}
     .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
     @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:640px){.grid{grid-template-columns:1fr}}
     .card{border:1px solid var(--border);background:color-mix(in oklab,var(--panel) 94%,transparent);border-radius:16px;overflow:hidden}
     .card:hover{outline:2px solid color-mix(in oklab,var(--brand) 40%,transparent);outline-offset:2px}
     .thumb{aspect-ratio:16/9;display:grid;place-items:center;font-weight:800;letter-spacing:.08em;color:#0b0c10;
-           background:linear-gradient(135deg,color-mix(in oklab,var(--brand) 35%,var(--panel)),
-                                               color-mix(in oklab,var(--accent) 25%,var(--panel)));}
+           background:linear-gradient(135deg,color-mix(in oklab,var(--brand) 35%,var(--panel)),color-mix(in oklab,var(--accent) 25%,var(--panel)))}
     .content{padding:16px}
     .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-    .title{font-weight:700;margin:6px 0 6px}
-    .desc{color:var(--muted);font-size:14px}
-    .tagrow{display:flex;gap:8px;flex-wrap:wrap;padding:12px 16px;border-top:1px solid var(--border)}
-    .tag{font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
+    .title{font-weight:700;margin:6px 0 0}
   </style>
 </head>
 <body>
   <div class="wrap">
+    <header>
+      <a class="btn" href="/">← Home</a>
+    </header>
+
     <h1>CS180 Projects</h1>
-    <p class="muted">Curated coursework projects. Only Project 0 is listed now; add future CS180 work here.</p>
 
     <div class="grid">
-      <!-- Project 0 -->
+      <!-- Project 0 (no description, no tags) -->
       <a class="card" href="/0/index.html">
         <div class="thumb">P0</div>
         <div class="content">
           <div class="kicker">CS180</div>
-          <div class="title">Project 0 — Becoming Friends with Your Camera</div>
-          <p class="desc">playing with my iphone camera settings :p</p>
+          <div class="title">Project 0 — Getting Started</div>
         </div>
       </a>
 
-      <!-- TEMPLATE (duplicate and edit for each new CS180 project) -->
+      <!-- TEMPLATE for future projects (copy & edit; keep minimal) -->
       <!--
       <a class="card" href="/1/index.html">
         <div class="thumb">P1</div>
         <div class="content">
           <div class="kicker">CS180</div>
           <div class="title">Project 1 — Title</div>
-          <p class="desc">One-line summary of what you built and show.</p>
-        </div>
-        <div class="tagrow">
-          <span class="tag">NumPy</span><span class="tag">Image Ops</span><span class="tag">Write-up</span>
         </div>
       </a>
       -->
