@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>CS180 Projects — Chuyue Zhang</title>
+  <title>Project 1 — Colorizing Prokudin–Gorskii | Chuyue Zhang</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -14,56 +14,116 @@
     body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--text);
          background:radial-gradient(1200px 600px at 80% -10%,var(--ring),transparent 40%),var(--bg);line-height:1.6}
     a{color:inherit;text-decoration:none}
+    code{background:color-mix(in oklab,var(--panel) 96%,transparent);border:1px solid var(--border);padding:2px 6px;border-radius:6px}
     .wrap{max-width:1100px;margin:0 auto;padding:24px}
-    header{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0}
-    .brand{display:flex;gap:10px;align-items:center;font-weight:800}
-    .brand-mark{height:28px;width:28px;display:grid;place-items:center;border-radius:9px;background:linear-gradient(135deg,var(--brand),var(--accent));color:#0b0c10}
+    header{display:flex;justify-content:space-between;align-items:center;gap:16px}
     .btn{border:1px solid var(--border);background:var(--panel);padding:8px 12px;border-radius:10px;font-weight:600}
-    h1{margin:6px 0 2px}
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+    h1{margin:14px 0 6px}
+    .muted{color:var(--muted)}
+    .callout{border:1px dashed var(--border);padding:12px;border-radius:12px;background:color-mix(in oklab,var(--panel) 92%,transparent);margin:10px 0}
+
+    /* sections */
+    section{margin-top:20px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+
+    /* gallery */
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
     @media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:640px){.grid{grid-template-columns:1fr}}
-    .card{border:1px solid var(--border);background:color-mix(in oklab,var(--panel) 94%,transparent);border-radius:16px;overflow:hidden}
-    .card:hover{outline:2px solid color-mix(in oklab,var(--brand) 40%,transparent);outline-offset:2px}
-    .thumb{aspect-ratio:16/9;display:grid;place-items:center;font-weight:800;letter-spacing:.08em;color:#0b0c10;
-           background:linear-gradient(135deg,color-mix(in oklab,var(--brand) 35%,var(--panel)),color-mix(in oklab,var(--accent) 25%,var(--panel)))}
-    .content{padding:16px}
-    .kicker{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-    .title{font-weight:700;margin:6px 0 0}
+    figure{margin:0;border:1px solid var(--border);border-radius:12px;overflow:hidden;background:color-mix(in oklab,var(--panel) 94%,transparent)}
+    figure img{display:block;width:100%;height:auto;cursor:pointer}
+    figcaption{padding:10px 12px;color:var(--muted);font-size:14px}
+
+    /* lightbox */
+    #lightbox{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+    #lightbox img{max-width:95vw;max-height:85vh;display:block}
+    #lightbox .cap{margin-top:10px;color:#e6e6e6;text-align:center}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <a class="brand" href="/"><span class="brand-mark">CZ</span><span>Chuyue Zhang</span></a>
-      <div style="display:flex;gap:10px;align-items:center">
-        <a class="btn" href="/">Home</a>
-      </div>
+      <a class="btn" href="/">← Home</a>
     </header>
 
-    <h1>CS180 Projects</h1>
+    <h1>Project 1 — Colorizing Prokudin–Gorskii</h1>
+    <p class="muted">Selected colorized results exported to <code>/1/output/</code>.</p>
 
-    <div class="grid">
-      <!-- Project 0 (no description, no tags) -->
-      <a class="card" href="/0/index.html">
-        <div class="thumb">P0</div>
-        <div class="content">
-          <div class="kicker">CS180</div>
-          <div class="title">Project 0 — Getting Started</div>
-        </div>
-      </a>
+    <section id="overview">
+      <div class="callout">
+        <strong>Overview.</strong> Colorized historical glass-plate scans by aligning B/G channels to R and composing an RGB image. (Pyramid alignment + simple border crop.)
+      </div>
+    </section>
 
-      <!-- TEMPLATE for future projects (copy & edit; keep minimal) -->
-      <!--
-      <a class="card" href="/1/index.html">
-        <div class="thumb">P1</div>
-        <div class="content">
-          <div class="kicker">CS180</div>
-          <div class="title">Project 1 — Title</div>
-        </div>
-      </a>
-      -->
+    <section id="results">
+      <div class="section-title"><h2>Results</h2></div>
+      <div id="gallery" class="grid" aria-live="polite"></div>
+    </section>
+
+    <!-- Optional notes block you can edit later -->
+    <section id="notes">
+      <div class="section-title"><h2>Notes</h2></div>
+      <ul class="muted">
+        <li>Click any image to view a larger version.</li>
+        <li>Filenames map directly from the spec’s sample set (e.g., <code>cathedral</code>, <code>monastery</code>, <code>tobolsk</code>).</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- simple lightbox -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
+    <div>
+      <img id="lbimg" alt="Expanded view" />
+      <div id="lbcap" class="cap"></div>
     </div>
   </div>
+
+  <script>
+    const images = [
+      'cathedral.jpg',
+      'church.jpg',
+      'emir.jpg',
+      'harvesters.jpg',
+      'icon.jpg',
+      'italil.jpg',
+      'lastochikino.jpg',
+      'lugano.jpg',
+      'melons.jpg',
+      'monastery.jpg',
+      'self_portrait.jpg',
+      'siren.jpg',
+      'three_generations.jpg',
+      'tobolsk.jpg',
+    ];
+
+    function toTitle(fn){
+      const name = fn.replace(/\.jpg$/i,'').replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+      return name;
+    }
+
+    const g = document.getElementById('gallery');
+    g.innerHTML = images.map(f => `
+      <figure>
+        <img src="output/${f}" alt="${toTitle(f)}" data-file="${f}" />
+        <figcaption>${toTitle(f)}</figcaption>
+      </figure>
+    `).join('');
+
+    // lightbox
+    const lb = document.getElementById('lightbox');
+    const lbimg = document.getElementById('lbimg');
+    const lbcap = document.getElementById('lbcap');
+
+    g.addEventListener('click', (e) => {
+      const img = e.target.closest('img');
+      if(!img) return;
+      lbimg.src = img.src;
+      lbcap.textContent = img.alt;
+      lb.style.display = 'flex';
+    });
+
+    lb.addEventListener('click', () => { lb.style.display = 'none'; lbimg.src = ''; });
+    window.addEventListener('keydown', (e) => { if(e.key === 'Escape') { lb.style.display = 'none'; lbimg.src = ''; }});
+  </script>
 </body>
 </html>
