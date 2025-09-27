@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 Project 2 — Filtering, Hybrids & Pyramids</title>
+  <style>
+    :root{
+      --bg:#0b0d12; --card:#11141b; --ink:#e9ecf1; --muted:#a3adbd; --accent:#7cc0ff;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    header{position:sticky;top:0;background:linear-gradient(180deg,#0b0d12 60%,rgba(11,13,18,.85));backdrop-filter:saturate(1.2) blur(6px);box-shadow:var(--shadow);z-index:10}
+    header .wrap{max-width:1100px;margin:auto;display:flex;align-items:center;gap:16px;padding:14px 18px}
+    header h1{font-size:20px;margin:0;letter-spacing:.3px}
+    nav{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap}
+    nav a{color:var(--muted);text-decoration:none;font-weight:600}
+    nav a:hover{color:var(--accent)}
+    main{max-width:1100px;margin:24px auto;padding:0 18px 100px}
+    section{margin:36px 0;border-radius:18px;background:var(--card);box-shadow:var(--shadow)}
+    .sec-title{margin:0;padding:18px 22px;border-bottom:1px solid #1b2030}
+    .lede{padding:0 22px 18px;color:var(--muted)}
+    .grid{display:grid;gap:14px;padding:18px 22px}
+    .g1{grid-template-columns:repeat(1,minmax(0,1fr))}
+    .g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+    .g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+    figure{margin:0;background:#0e1119;border-radius:14px;overflow:hidden;border:1px solid #1d2231}
+    figure img{display:block;width:100%;height:auto}
+    figcaption{padding:8px 10px;color:var(--muted);font-size:13px;border-top:1px solid #1b2030}
+    .missing{display:flex;align-items:center;justify-content:center;aspect-ratio:4/3;background:#121622;color:#56607a;font-weight:700}
+    .note{color:var(--muted);font-size:14px;padding:0 22px 18px}
+    footer{max-width:1100px;margin:40px auto 80px;padding:0 18px;color:var(--muted)}
+    .badge{display:inline-block;padding:.2rem .55rem;border:1px solid #2a3146;border-radius:999px;color:#9fb3ce;font-size:12px;margin-left:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Project 2 — Filters, Derivatives, Hybrid Images & Pyramids <span class="badge">CS180</span></h1>
+      
+      <nav>
+        <a href="#p11">1.1 Convolution</a>
+        <a href="#p12">1.2 Finite Diff</a>
+        <a href="#p13">1.3 DoG</a>
+        <a href="#p21">2.1 Sharpen</a>
+        <a href="#p22">2.2 Hybrids</a>
+        <a href="#p23">2.3 Pyramids</a>
+        <a href="#p24">2.4 Blending</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    
+    <section id="p11">
+      <pre><code>
+def convolve4(image, kernel) -> np.ndarray:
+    H, W = image.shape
+    kh, kw = kernel.shape
+    pad_h, pad_w = kh // 2, kw // 2
+
+    k = np.flipud(np.fliplr(kernel))
+
+    padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')
+
+    out = np.zeros_like(image, dtype=float)
+
+    for y in range(H):
+        for x in range(W):
+            acc = 0.0
+            for i in range(kh):
+                for j in range(kw):
+                    acc += padded[y+i, x+j] * k[i, j]
+            out[y, x] = acc
+
+    return out
+
+def convolve2(image, kernel) -> np.ndarray:
+    H, W = image.shape
+    kh, kw = kernel.shape
+    pad_h, pad_w = kh // 2, kw // 2
+
+    k = np.flipud(np.fliplr(kernel))
+
+    padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')
+
+    out = np.zeros_like(image, dtype=float)
+
+    for y in range(H):
+        for x in range(W):
+            window = padded[y:y+kh, x:x+kw]
+            out[y, x] = np.sum(window * k)
+
+    return out
+
+crazy = np.array([[ 2, -2,  2],
+                  [-2,  -8, -2],
+                  [ 2, -2,  2]], dtype=np.float64)
+
+selfie_funny = convolve2(selfie, crazy)
+
+  </code></pre>
+    </section>
+    <!-- 1.1 -->
+    <section id="p11">
+      <h2 class="sec-title">Part 1.1 — Convolution from Scratch</h2>
+      <p class="lede">We implement 2D convolution and play with 3×3 kernels (box blur + whacky filters). Convolution using only NumPy and compared the results with scipy.signal.convolve2d. Functionally, the outputs match to within floating-point error, confirming correctness. However, the NumPy version is much slower because it explicitly loops over pixels, while SciPy uses optimized C implementations and fft that are efficient even for large kernels.</p>
+      <!-- Line: original vs whacky kernel result -->
+      <div class="grid g2">
+        
+        <figure>
+          <img src="source/selfie-far.png" alt="Original selfie" />
+          <figcaption>Original</figcaption>
+        </figure>
+        <figure>
+          <img src="source/selfie_crazy.png" alt="Whacky 3x3 kernel result" />
+          <figcaption>Whacky 3×3 kernel</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 1.2 -->
+    <section id="p12">
+      <h2 class="sec-title">Part 1.2 — Finite Differences (Dx, Dy) & Edges</h2>
+      <p class="lede">Compute ∂I/∂x and ∂I/∂y, magnitude, and percentile thresholding for an edge map.</p>
+      <!-- Line: Dx, Dy, binarized -->
+      <div class="grid g3">
+        <figure>
+          <img src="source/cameramanx.png" alt="Cameraman Dx" />
+          <figcaption>∂I/∂x</figcaption>
+        </figure>
+        <figure>
+          <img src="source/cameramany.png" alt="Cameraman Dy" />
+          <figcaption>∂I/∂y</figcaption>
+        </figure>
+        <figure>
+          <img src="source/cameraman_binarized.png" alt="Binarized edges" />
+          <figcaption>Top-percentile edges</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 1.3 -->
+    <section id="p13">
+      <h2 class="sec-title">Part 1.3 — Derivative of Gaussian (DoG)</h2>
+      <p class="lede">Smooth with Gaussian, then apply finite differences → cleaner edges vs. raw differences. I compared 3 different threshold, 85% 90% and 95%, I think from the human centered prespective 95% preserves most of the human feature while most effectively removing the environmental noises</p>
+      <!-- Line: DoG vs (optional) comparison -->
+      <div class="grid g2">
+        <figure>
+          <img src="source/cameraman_dog.png" alt="DoG edge visualization" />
+          <figcaption>DoG + binarized result</figcaption>
+        </figure>
+        <figure>
+          <img src="source/cameraman_binarized.png" alt="DoG edge visualization" />
+          <figcaption>dy dx binarized result</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2.1 -->
+    <section id="p21">
+      <h2 class="sec-title">Part 2.1 — Image Sharpening</h2>
+      <p class="lede">For image sharpening, the process works by blurring the image with a Gaussian filter, subtracting the blurred version from the original to isolate the high frequencies, and then adding a scaled by alpha version of these details back to the original. This boosts contrast along edges and makes features appear crisper, while still preserving the overall structure of the image.</p>
+      <!-- Line: Taj original, high, sharpened -->
+      <div class="grid g3">
+        <figure>
+          <img src="source/taj.png" alt="Taj original" />
+          <figcaption>Original Taj</figcaption>
+        </figure>
+        <figure>
+          <img src="source/taj_high.png" alt="Taj high-frequency" />
+          <figcaption>High-frequency</figcaption>
+        </figure>
+        <figure>
+          <img src="source/taj_sharpened.png" alt="Taj sharpened" />
+          <figcaption>Sharpened</figcaption>
+        </figure>
+      </div>
+      <!-- Line: Cat blur vs sharpened -->
+      <div class="grid g2">
+        <figure>
+          <img src="source/blurcat.png" alt="Blurred cat" />
+          <figcaption>Blurred cat</figcaption>
+        </figure>
+        <figure>
+          <img src="source/sharpen_cat.png" alt="Sharpened cat" />
+          <figcaption>Sharpened cat</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2.2 -->
+    <section id="p22">
+      <h2 class="sec-title">Part 2.2 — Hybrid Images</h2>
+      <p class="lede">Combine high frequencies of one image with low frequencies of another (after alignment). Also referenced the binarization from previous part and zero'd out some of the noise (about 50%)</p>
+      <!-- Line: Derek + Nutmeg + Hybrid -->
+      <div class="grid g3">
+        <figure>
+          <img src="source/DerekPicture.png" alt="Derek" />
+          <figcaption>Input A — high</figcaption>
+        </figure>
+        <figure>
+          <img src="source/nutmeg.png" alt="Nutmeg" />
+          <figcaption>Input B — low</figcaption>
+        </figure>
+        <figure>
+          <img src="source/catman.png" alt="Hybrid Derek+Nutmeg" />
+          <figcaption>Hybrid: Derek + Nutmeg</figcaption>
+        </figure>
+      </div>
+      <!-- Line: FFT grid (favorite result process) -->
+      <div class="grid g1">
+        <figure>
+          <img src="source/fft.png" alt="FFT grid" />
+          <figcaption>Fourier spectra: inputs, filtered, hybrid</figcaption>
+        </figure>
+      </div>
+      <!-- Line: Additional hybrids (results only) -->
+      <div class="grid g2">
+        <figure>
+          <img src="source/man_stare.png" alt="sigma man" />
+          <figcaption>Hybrid example</figcaption>
+        </figure>
+        <figure>
+          <img src="source/cat_stare.png" alt="sigma cat" />
+          <figcaption>Hybrid example</figcaption>
+        </figure>
+        <figure>
+          <img src="source/stare.png" alt="sigma squared" />
+          <figcaption>Hybrid example</figcaption>
+        </figure>
+      </div>
+      <div class="grid g2">
+        <figure>
+          <img src="source/dog_cooked.png" alt="cooked dog" />
+          <figcaption>Hybrid example</figcaption>
+        </figure>
+        <figure>
+          <img src="source/cat_cooked.png" alt="cooked cat" />
+          <figcaption>Hybrid example</figcaption>
+        </figure>
+        <figure>
+          <img src="source/cooked.png" alt="overcooked" />
+          <figcaption>Hybrid example</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2.3 -->
+    <section id="p23">
+      <h2 class="sec-title">Part 2.3 — Gaussian & Laplacian Pyramids</h2>
+      <p class="lede">Pyramid visualizations across scales (Gaussian stack and Laplacian stack).</p>
+      <!-- Line: Pyramid stacks -->
+      <div class="grid g1">
+        <figure>
+          <img src="source/image_stack.png" alt="Pyramid stacks" />
+          <figcaption>Gaussian (top row) & Laplacian (bottom row)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 2.4 -->
+    <section id="p24">
+      <h2 class="sec-title">Part 2.4 — Multi-Resolution Blending</h2>
+      <p class="lede">For part 2.4, I used Laplacian pyramid blending to combine two images smoothly. First, I built Gaussian pyramids for both images and a blending mask, then derived Laplacian pyramids by subtracting consecutive Gaussian levels. At each level, I blended the Laplacian bands from the two images using the corresponding blurred mask, which ensures that both fine details and large-scale structures transition smoothly without sharp seams. Finally, I reconstructed the image from the blended pyramid to produce a natural-looking result.</p>
+      <!-- Line: Oraple blend -->
+      <div class="grid g2">
+        <figure>
+          <img src="source/oraple.png" alt="Oraple" />
+          <figcaption>Oraple (apple × orange)</figcaption>
+        </figure>
+        <figure>
+          <img src="source/ball.png" alt="coconut ball" />
+          <figcaption>Oraple (apple × orange)</figcaption>
+        </figure>
+        <figure>
+          <img src="source/car.png" alt="coconut ball" />
+          <figcaption>Oraple (apple × orange)</figcaption>
+        </figure>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Built with plain HTML/CSS. Replace placeholders as you add more results.</p>
+  </footer>
+</body>
+</html>

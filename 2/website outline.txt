@@ -1,0 +1,92 @@
+1.1 convolution from scratch
+code snippet:
+def convolve4(image, kernel) -> np.ndarray:
+    H, W = image.shape
+    kh, kw = kernel.shape
+    pad_h, pad_w = kh // 2, kw // 2
+
+    k = np.flipud(np.fliplr(kernel))
+
+    padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')
+
+    out = np.zeros_like(image, dtype=float)
+
+    for y in range(H):
+        for x in range(W):
+            acc = 0.0
+            for i in range(kh):
+                for j in range(kw):
+                    acc += padded[y+i, x+j] * k[i, j]
+            out[y, x] = acc
+
+    return out
+
+def convolve2(image, kernel) -> np.ndarray:
+    H, W = image.shape
+    kh, kw = kernel.shape
+    pad_h, pad_w = kh // 2, kw // 2
+
+    k = np.flipud(np.fliplr(kernel))
+
+    padded = np.pad(image, ((pad_h, pad_h), (pad_w, pad_w)), mode='constant')
+
+    out = np.zeros_like(image, dtype=float)
+
+    for y in range(H):
+        for x in range(W):
+            window = padded[y:y+kh, x:x+kw]
+            out[y, x] = np.sum(window * k)
+
+    return out
+
+crazy = np.array([[ 2, -2,  2],
+                  [-2,  -8, -2],
+                  [ 2, -2,  2]], dtype=np.float64)
+
+selfie_funny = convolve2(selfie, crazy)
+
+display selfie_far, selfie_crazy
+
+
+1.2 
+
+display cameraman.png, cameramanx.png, cameramany.png
+these are the partial derivative for cameraman in x and y direction, and for the edge/binarized image, we calculate the gradient magnitude image and then only show the top 10 percentile and 0 out the rest
+display cameraman_binarized.png
+
+1.3
+
+display cameraman_dog
+
+the conclusion we get from comparing part 1.2 and 1.3 is that we can definitely see the smoothing effect but the magnitude level is slightly different between then so they will appear slightly different (difference in background artifacts mostly)
+
+2.1 
+
+the process of sharpening is that we convolve the image with gaussian filter, which gives us the low frequency image, and then we subtract the low frequency image from the original to get high frequency remains. we multiplhy the high frequency part with an arbitrary alpha (greater than 1) and clip that onto the original image to get sharpened image
+
+display taj, taj_high, and taj_shaprened
+
+here is an image of my cats running into my hamper, it was natrually blurry cuz they were moving and I figured its a good image to sharpen.
+display blurcat, sharpencat
+
+2.2
+
+the hybird image making process is very similar to sharpening image, I modified my sharpening image function to return the sharpened image, low frequency part, and high frequency part, essentially the process is to clip the high frequency image from one to the low frequency image of the other, after alignment of cource.
+
+display DerekPicture, nutmeg, catman
+
+display fft
+
+display cat_cooked, dog_cooked, hybird_cooked
+
+display cat_stare, man_stare, stare
+
+2.3
+display image stack
+
+2.4
+display oraple
+
+
+
+
