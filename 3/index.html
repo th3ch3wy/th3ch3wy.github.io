@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project 3 — Planar Homographies & Rectification</title>
+  <style>
+    :root{
+      --maxw: 1100px;
+    }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      margin: 0;
+      line-height: 1.55;
+      color: #0f172a;
+      background: #f8fafc;
+    }
+    header{
+      background: #0ea5e9;
+      color: white;
+      padding: 28px 18px;
+    }
+    header h1{
+      margin: 0 0 6px 0;
+      font-size: clamp(24px, 4vw, 36px);
+      letter-spacing: .3px;
+    }
+    header p{ margin: 4px 0 0 0; opacity:.95 }
+    main{ max-width: var(--maxw); margin: 24px auto; padding: 0 16px 60px;}
+    h2{
+      margin-top: 36px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 6px;
+    }
+    .intro{
+      background: #e0f2fe;
+      border-left: 4px solid #0284c7;
+      padding: 14px 18px;
+      border-radius: 6px;
+      margin: 20px 0;
+      font-size: 15px;
+      color: #1e293b;
+    }
+    .pair-grid{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+      align-items: start;
+    }
+    figure{ margin: 0; background: white; border-radius: 12px; box-shadow: 0 6px 18px rgba(2,6,23,0.06); overflow: hidden; border: 1px solid #e2e8f0; }
+    figure img{ width: 100%; height: auto; display: block; }
+    figcaption{ padding: 10px 12px; font-size: 14px; color: #334155; background: #f8fafc; border-top: 1px solid #e2e8f0;}
+    .stack{
+      display: grid;
+      gap: 12px;
+    }
+    .matrix{
+      background: #0b1020;
+      color: #c7e1ff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      overflow:auto;
+      border: 1px solid #1f2a44;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+    }
+    .row{
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 18px;
+    }
+    .kicker{ text-transform: uppercase; letter-spacing:.12em; font-size: 12px; color:#64748b; }
+    .note{ color:#475569; font-size: 14px; }
+    .full figure{ max-width: 100%; }
+    .center{ text-align:center;}
+    a{ color:#0369a1; }
+    .one-col{ display: grid; gap: 14px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Project 3 — Imaging Warping and Mosaicing</h1>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>Instead of trusting my shaky hand without a tripod, I decided to take my “photos” in <strong>Valorant</strong> — my “favorite” game — using the <em>observer mode</em> and walking around the map. I also had to crop out around <strong>45%</strong> of the outer edge for the photos because the Valorant player POV has a wide FOV and fisheye distortion.</p>
+    </section>
+
+    <section id="rectification">
+      <div class="kicker">Rectification</div>
+      <h2>Side-by-side: original vs. rectified (squared)</h2>
+      <div class="pair-grid">
+        <figure>
+          <img src="source/tiles.png" alt="tiles original">
+          <figcaption><strong>tiles</strong> (original)</figcaption>
+        </figure>
+        <figure>
+          <img src="source/tiles_squared.png" alt="tiles squared">
+          <figcaption><strong>tiles_squared</strong> (rectified)</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/iphone17.jpg" alt="iphone17 original">
+          <figcaption><strong>iphone17</strong> (original)</figcaption>
+        </figure>
+        <figure>
+          <img src="source/iphone17_squared.png" alt="iphone17 squared">
+          <figcaption><strong>iphone17_squared</strong> (rectified)</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="equation">
+      <div class="kicker">Homography</div>
+      <h2>Homography matrix equation</h2>
+      <div class="one-col">
+        <figure class="full">
+          <section class="intro">
+      <p>Thanks to the First Principles of Computer Vision youtube channel I was able to get a better understanding/refresher on the homography topic, highly recomend yall checking it out if interested. </p>
+    </section>
+          <img src="source/homography.jpeg" alt="homography equation image">
+          <figcaption>Project homography equation illustration.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="warps">
+      <div class="kicker">Warped Results</div>
+      <h2>Before → After → After with bilinear + H</h2>
+
+      <!-- GELATO -->
+      <article class="row">
+        <div class="stack">
+          <figure><img src="source/gelato_before.png" alt="gelato before"><figcaption><strong>gelato_before</strong></figcaption></figure>
+          <figure><img src="source/gelato_after.png" alt="gelato after"><figcaption><strong>gelato_after</strong></figcaption></figure>
+          <figure><img src="source/gelato_after2.png" alt="gelato after2"><figcaption><strong>gelato_after bilinear</strong></figcaption></figure>
+        </div>
+        <div>
+          <h3>H (gelato)</h3>
+          <pre class="matrix">[[ 2.12427307e+00 -3.83087444e-02 -1.35619388e+03]
+ [ 3.42698869e-01  1.86549390e+00 -3.01937886e+02]
+ [ 9.84082386e-04 -8.53377250e-06  1.00000000e+00]]</pre>
+        </div>
+      </article>
+
+      <!-- LOBBY -->
+      <article class="row">
+        <div class="stack">
+          <figure><img src="source/lobby_before.png" alt="lobby before"><figcaption><strong>lobby_before</strong></figcaption></figure>
+          <figure><img src="source/lobby_after.png" alt="lobby after"><figcaption><strong>lobby_after</strong></figcaption></figure>
+          <figure><img src="source/lobby_after2.png" alt="lobby after2"><figcaption><strong>lobby_after bilinear</strong></figcaption></figure>
+        </div>
+        <div>
+          <h3>H (lobby)</h3>
+          <pre class="matrix">[[ 1.99944157e+00 -6.45679567e-02 -1.37541128e+03]
+ [ 3.27892043e-01  1.79081678e+00 -2.99953633e+02]
+ [ 8.60327302e-04  4.20368691e-06  1.00000000e+00]]</pre>
+        </div>
+      </article>
+
+      <!-- SPAWN -->
+      <article class="row">
+        <div class="stack">
+          <figure><img src="source/spawn_before.png" alt="spawn before"><figcaption><strong>spawn_before</strong></figcaption></figure>
+          <figure><img src="source/spawn_after.png" alt="spawn after"><figcaption><strong>spawn_after</strong></figcaption></figure>
+          <figure><img src="source/spawn_after2.png" alt="spawn after2"><figcaption><strong>spawn_after bilinear</strong></figcaption></figure>
+        </div>
+        <div>
+          <h3>H (spawn)</h3>
+          <pre class="matrix">[[ 2.14421796e+00 -1.53899348e-01 -1.36882806e+03]
+ [ 4.42382997e-01  1.86965573e+00 -4.26361093e+02]
+ [ 9.91403605e-04  1.20407784e-06  1.00000000e+00]]</pre>
+        </div>
+      </article>
+
+      <!-- TREE -->
+      <article class="row">
+        <div class="stack">
+          <figure><img src="source/tree_before.png" alt="tree before"><figcaption><strong>tree_before</strong></figcaption></figure>
+          <figure><img src="source/tree_after.png" alt="tree after"><figcaption><strong>tree_after</strong></figcaption></figure>
+          <figure><img src="source/tree_after2.png" alt="tree after2"><figcaption><strong>tree_after bilinear</strong></figcaption></figure>
+        </div>
+        <div>
+          <h3>H (tree)</h3>
+          <pre class="matrix">[[ 2.57352213e+00 -1.07710341e-03 -1.81296390e+03]
+ [ 4.66104372e-01  2.24337703e+00 -4.06371077e+02]
+ [ 1.36795008e-03 -1.80689047e-06  1.00000000e+00]]</pre>
+        </div>
+      </article>
+
+    </section>
+
+    <footer class="center" style="margin-top:40px;">
+      <p class="note">Images are referenced from the local <code>source/</code> folder as shown in your project structure.</p>
+    </footer>
+  </main>
+</body>
+</html>
