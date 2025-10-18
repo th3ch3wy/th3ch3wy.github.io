@@ -128,7 +128,8 @@
     <section id="warps">
       <div class="kicker">Warped Results</div>
       <section class="intro">
-      <p>The speed difference were pretty minimal for me, probably due to my small image size, but I guess bilinear approach has slightly better performance but will be slower for larger images.</p>
+      <p>The speed difference were pretty minimal for me, probably due to my small image size, but I guess bilinear approach has slightly better performance but will be slower for larger images. To build the final mosaic, I computed the union bounding box of both images in the reference (im2) frame, created a canvas large enough to hold both, and used soft “tent” masks to feather the overlaps. This blending method smoothly transitions pixel values across boundaries, hiding small alignment errors and exposure differences.
+Because Valorant’s first-person camera introduces wide-FOV distortion, I cropped the center region (~50%) of each frame to approximate a pinhole projection before computing correspondences. This helped maintain straight lines and made the resulting stitched image appear geometrically correct.</p>
     </section>
       <h2>Before → After → After with bilinear + H</h2>
 
@@ -192,11 +193,93 @@
         </div>
       </article>
 
+        <section id="partb">
+      <div class="kicker">Part B — Automatic Feature Matching & Mosaicing</div>
+
+      <h2>B1: Harris Corner Detection</h2>
+      <section class="intro">
+        <p>I had to tweak some of the <code>peak_local_max</code> input parameters to reduce the number of raw Harris interest points — otherwise my computer memory would have exploded (the original settings used about <strong>61 GB</strong> for this single image 😅).</p>
+      </section>
+      <div class="one-col center">
+        <figure>
+          <img src="source/harris_corner.png" alt="Harris corner detection result">
+          <figcaption><strong>harris_corner.png</strong> — Harris corner response visualization</figcaption>
+        </figure>
+      </div>
+
+      <h2>B2: ANMS + Feature Descriptors</h2>
+      <section class="intro">
+        <p>I chose to be very selective about the top <em>K</em> matching features even though <strong>RANSAC</strong> can handle occasional mismatches — it helped me get cleaner correspondences and more visually aligned mosaics.</p>
+      </section>
+      <div class="one-col">
+        <figure>
+          <img src="source/spawn_features.png" alt="spawn features">
+          <figcaption><strong>spawn_features</strong> — selected ANMS feature points (84 tentative matches)</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/spawn_feature_pairs.png" alt="spawn feature pairs">
+          <figcaption><strong>spawn_feature_pairs</strong> — matched feature pairs between images</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/tree_features.png" alt="tree features">
+          <figcaption><strong>tree_features</strong> — selected ANMS feature points (30 tentative matches)</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/tree_feature_pairs.png" alt="tree feature pairs">
+          <figcaption><strong>tree_feature_pairs</strong> — matched feature pairs between images</figcaption>
+        </figure>
+      </div>
+
+      <h2>B3: Auto-Stitched Mosaics</h2>
+      <section class="intro">
+        <p>These auto-stitched mosaics honestly don’t look much different from the ones I created manually — so I’d say my steady hands did a <strong>pretty good job :D</strong></p>
+      </section>
+      <div class="stack">
+        <figure>
+          <img src="source/spawn_auto.png" alt="spawn auto mosaic">
+          <figcaption><strong>spawn_auto</strong> — automatic panorama stitching result</figcaption>
+        </figure>
+        <figure>
+          <img src="source/tree_auto.png" alt="tree auto mosaic">
+          <figcaption><strong>tree_auto</strong> — automatic panorama stitching result</figcaption>
+        </figure>
+      </div>
     </section>
 
-    <footer class="center" style="margin-top:40px;">
-      <p class="note">Images are referenced from the local <code>source/</code> folder as shown in your project structure.</p>
-    </footer>
+        <section id="showcase">
+      <div class="kicker">Showcase</div>
+      <h2>Additional Feature Visualizations & Results</h2>
+      <section class="intro">
+        <p>Here are a few more examples I tested to further validate the automatic feature extraction and matching pipeline. 
+          These are locations from another map called Breeze.</p>
+      </section>
+
+      <div class="one-col">
+        <figure>
+          <img src="source/additional_features.png" alt="additional features">
+          <figcaption><strong>additional_features</strong> — detected interest points and matching regions</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/additional.png" alt="additional mosaic result">
+          <figcaption><strong>additional.png</strong> — resulting mosaic for this pair</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/additional2_features.png" alt="additional2 features">
+          <figcaption><strong>additional2_features</strong> — feature points for the second additional example</figcaption>
+        </figure>
+
+        <figure>
+          <img src="source/additional2.png" alt="additional2 mosaic result">
+          <figcaption><strong>additional2.png</strong> — resulting mosaic for this second pair</figcaption>
+        </figure>
+      </div>
+    </section>
+
   </main>
 </body>
 </html>
