@@ -1,0 +1,33 @@
+make a website using the same approach as before for project 3 (https://cal-cs180.github.io/fa25/hw/proj3/partA.html)
+
+display rectification image side by side:
+
+tiles and tiles_squared
+
+iphone17 and iphone17_squared
+
+display homography matrix equation image:
+homography 
+
+display all the images with suffix _before, each one take up a line themselves, then display the _after image right underneath it, then display the _after2 underneath _after, also include the H matrix
+
+the homography matrix are listed below:
+lobby:
+[[ 1.99944157e+00 -6.45679567e-02 -1.37541128e+03]
+ [ 3.27892043e-01  1.79081678e+00 -2.99953633e+02]
+ [ 8.60327302e-04  4.20368691e-06  1.00000000e+00]]
+
+gelato:
+[[ 2.12427307e+00 -3.83087444e-02 -1.35619388e+03]
+ [ 3.42698869e-01  1.86549390e+00 -3.01937886e+02]
+ [ 9.84082386e-04 -8.53377250e-06  1.00000000e+00]]
+
+spawn:
+[[ 2.14421796e+00 -1.53899348e-01 -1.36882806e+03]
+ [ 4.42382997e-01  1.86965573e+00 -4.26361093e+02]
+ [ 9.91403605e-04  1.20407784e-06  1.00000000e+00]]
+
+ tree:
+[[ 2.57352213e+00 -1.07710341e-03 -1.81296390e+03]
+ [ 4.66104372e-01  2.24337703e+00 -4.06371077e+02]
+ [ 1.36795008e-03 -1.80689047e-06  1.00000000e+00]]
