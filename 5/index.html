@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CS180 Project 5A — Fun With Diffusion Models</title>
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --card:#11131a;
+      --text:#e9edf1;
+      --muted:#b8c0cc;
+      --line:#242a36;
+      --accent:#7aa2ff;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      background: radial-gradient(1200px 600px at 20% -10%, rgba(122,162,255,.18), transparent 60%),
+                  radial-gradient(900px 500px at 90% 10%, rgba(122,162,255,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.55;
+    }
+    a{ color:var(--accent); text-decoration:none; }
+    a:hover{ text-decoration:underline; }
+    header{
+      border-bottom: 1px solid var(--line);
+      background: rgba(10,12,16,.6);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .wrap{ max-width: 1100px; margin: 0 auto; padding: 18px; }
+    .topbar{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: 16px;
+    }
+    .title{ display:flex; flex-direction:column; gap:2px; }
+    .title h1{ font-size: 18px; margin:0; font-weight:700; letter-spacing:.2px; }
+    .title .sub{ margin:0; font-size: 13px; color: var(--muted); }
+    nav{
+      display:flex; flex-wrap:wrap; gap: 8px; justify-content:flex-end;
+      font-size: 13px;
+    }
+    nav a{ padding: 6px 10px; border:1px solid transparent; border-radius: 999px; }
+    nav a:hover{ border-color: var(--line); text-decoration:none; }
+
+    main{ padding: 26px 0 70px; }
+    .hero{
+      background: linear-gradient(180deg, rgba(17,19,26,.95), rgba(17,19,26,.72));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .hero h2{ margin:0 0 6px; font-size: 26px; }
+    .hero p{ margin: 8px 0 0; color: var(--muted); max-width: 80ch; }
+    .meta{
+      display:flex; flex-wrap:wrap; gap: 10px;
+      margin-top: 14px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    section{
+      margin-top: 22px;
+      background: rgba(17,19,26,.55);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    section h3{ margin: 0 0 6px; font-size: 20px; }
+    section h4{ margin: 18px 0 8px; font-size: 15px; color: var(--text); }
+    .hint{ margin: 10px 0 0; color: var(--muted); font-size: 14px; }
+    pre{
+      margin: 12px 0 0;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      overflow:auto;
+      color: #d7dce2;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .grid.two{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid.four{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    @media (max-width: 900px){
+      .grid.four{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px){
+      .grid, .grid.two, .grid.four{ grid-template-columns: 1fr; }
+      .hero h2{ font-size: 22px; }
+    }
+
+    figure{
+      margin:0;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      border-radius: 14px;
+      overflow:hidden;
+    }
+    figure img{ width:100%; height:auto; display:block; background:#0f1117; }
+    figcaption{
+      padding: 10px 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--line);
+    }
+    .callout{
+      border-left: 3px solid var(--accent);
+      padding: 10px 12px;
+      background: rgba(122,162,255,.08);
+      border-radius: 12px;
+      color: var(--muted);
+      margin-top: 12px;
+      font-size: 14px;
+    }
+    footer{
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align:center;
+      padding: 24px 0 40px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="title">
+        <h1>CS180 / 280A — Project 5</h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="hero">
+      <h2>Project 5A: The Power of Diffusion Models</h2>
+      <div class="meta">
+        <div class="pill"><b>Name:</b>Chuyue Zhang</div>
+        <div class="pill"><b>Term:</b> Fall 2025</div>
+      </div>
+    </div>
+
+    <!-- A.0 -->
+    <section id="a0">
+      <h3>Part A.0 — Play with the Model Using Your Own Text Prompts</h3>
+      <div class="wide">
+        <figure class="wide">
+        <img src="source/A1.png">
+        </figure>      </div>
+    </section>
+
+    <!-- A.1.1 + A.1.2 (combined) -->
+    <section id="a11">
+    <h3>Part A.1.1 & A.1.2 — Forward Process + Gaussian Denoise</h3>
+    <p class="hint">
+       Here is the forward diffusion process at multiple noise levels and the
+        corresponding Gaussian blur denoising baseline.
+    </p>
+
+    <div class="grid two">
+        <figure class="wide">
+        <img src="source/A2.png" alt="Forward process + Gaussian blur summary (A2)">
+        </figure>
+    </div>
+    </section>
+
+
+    <!-- A.1.3 -->
+    <section id="a13">
+      <h3>Part A.1.3 — One-Step Denoising</h3>
+      <p class="hint">One-step estimates at different noise levels (with your visualizations).</p>
+
+      <div class="grid two">
+        <figure><img src="source/A3.png"></figure>
+      </div>
+  </section>
+
+    <!-- A.1.4 -->
+    <section id="a14">
+    <h3>Part A.1.4 — Iterative Denoising</h3>
+
+    <p class="hint">
+        The following figures illustrate the progression of iterative denoising
+        and a comparison with classical Gaussian blur.
+    </p>
+
+    <h4>Iterative Denoising Progression</h4>
+    <div class="grid three">
+        <figure>
+        <img src="source/A5a.png" alt="Iterative denoising example 1">
+        <figcaption>Intermediate denoising result</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5b.png" alt="Iterative denoising example 2">
+        <figcaption>Intermediate denoising result</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5c.png" alt="Iterative denoising example 3">
+        <figcaption>Intermediate denoising result</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5d.png" alt="Gaussian blur result">
+        <figcaption>Gaussian blur result</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5e.png" alt="Iterative denoising result">
+        <figcaption>Iterative denoising result</figcaption>
+        </figure>
+    </div>
+
+    <h4>Comparison with Gaussian Blur</h4>
+    <div class="grid four">
+        <figure>
+        <img src="source/A4.png">
+        <figcaption>Test Image</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5f.png">
+        <figcaption>Iterative denoising result</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5g.png">
+        <figcaption>Gaussian denoise result</figcaption>
+        </figure>
+        <figure>
+        <img src="source/A5h.png">
+        <figcaption>One step denoise result</figcaption>
+        </figure>
+    </div>
+
+    <p class="hint">
+    Compared to Gaussian blur, one-step denoising is able to recover more semantic
+    structure and recognizable features. While Gaussian blur removes noise by smoothing high-frequency components,
+    it kind of destroys most edges and fine details. Iterative denoising did arguably better than one step denoising but I think
+    it could just be personal preference over a small sample size of images.
+  </p>    
+    </section>
+
+
+   <!-- A.1.5 -->
+    <section id="a15">
+    <h3>Part A.1.5 — Diffusion Model Sampling</h3>
+
+    <div class="grid three">
+        <figure>
+        <img src="source/A6a.png" alt="Sample 1">
+        </figure>
+        <figure>
+        <img src="source/A6b.png" alt="Sample 2">
+        </figure>
+        <figure>
+        <img src="source/A6c.png" alt="Sample 3">
+        </figure>
+    </div>
+
+    <div class="grid three">
+        <figure>
+        <img src="source/A6d.png" alt="Sample 4">
+        </figure>
+        <figure>
+        <img src="source/A6e.png" alt="Sample 5">
+        </figure>
+    </div>
+</section>
+
+
+    <!-- A.1.6 -->
+  <section id="a16">
+    <h3>Part A.1.6 — Classifier-Free Guidance (CFG)</h3>
+
+    <div class="grid three">
+      <figure><img src="source/A7a.png"></figure>
+      <figure><img src="source/A7b.png"></figure>
+      <figure><img src="source/A7c.png"></figure>
+    </div>
+
+    <div class="grid three">
+      <figure><img src="source/A7d.png"></figure>
+      <figure><img src="source/A7e.png"></figure>
+    </div>
+
+    <p class="hint">
+      Effect of CFG scale: REPLACE_ME
+    </p>
+  </section>
+
+
+    <!-- A.1.7 -->
+    <section id="a17">
+      <h3>Part A.1.7 — Image-to-image Translation</h3>
+
+      <div class="grid three">
+        <figure><img src="source/A8a.png"></figure>
+        <figure><img src="source/A8b.png"></figure>
+        <figure><img src="source/A8c.png"></figure>
+      </div>
+
+      <div class="grid three">
+        <figure><img src="source/A8d.png"></figure>
+        <figure><img src="source/A8e.png"></figure>
+      </div>
+
+      <p class="hint">
+        High quality photo to Campanile 
+      </p>
+    </section>
+
+    <!-- A.1.7.2 -->
+  <section id="a172">
+    <h3>Part A.1.7.2 — Image-to-Image Translation</h3>
+
+    <p class="hint">
+      Below are image-to-image translation results using both web images and
+      hand-drawn illustrations. For each example, the original image is shown
+      alongside the translated outputs produced through iterative diffusion.
+    </p>
+
+    <!-- Web Image 1 -->
+    <h4>Web Image Example 1</h4>
+    <div class="grid two">
+      <figure>
+        <img src="source/A9b.png">
+      </figure>
+      <figure>
+        <img src="source/A9a.png">
+      </figure>
+    </div>
+
+    <!-- Web Image 2 -->
+    <h4>Web Image Example 2</h4>
+    <div class="grid two">
+      <figure>
+        <img src="source/A10b.png">
+      </figure>
+      <figure>
+        <img src="source/A10a.png">
+      </figure>
+    </div>
+
+    <!-- Hand-drawn Image 1 -->
+    <h4>Hand-Drawn Image Example 1</h4>
+    <div class="grid two">
+      <figure>
+        <img src="source/A11b.png">
+      </figure>
+      <figure>
+        <img src="source/A11a.png">
+      </figure>
+    </div>
+
+    <!-- Hand-drawn Image 2 -->
+    <h4>Hand-Drawn Image Example 2</h4>
+    <div class="grid two">
+      <figure>
+        <img src="source/A12b.png">
+      </figure>
+      <figure>
+        <img src="source/A12a.png">
+      </figure>
+    </div>
+
+  <p class="hint">
+    Reflection: REPLACE_ME — discuss how the translation strength evolves across
+    iterations and how behavior differs between web images and hand-drawn inputs.
+  </p>
+</section>
+
+
+  <!-- A.1.7.2 (Inpainting Translation) -->
+  <section id="a172_inpaint">
+    <h3>Part A.1.7.2 — Inpainting Translation</h3>
+
+    <p class="hint">
+      Below are inpainting translation results. For each example, the original image
+      is shown alongside the inpainted outputs produced through iterative diffusion.
+    </p>
+
+    <!-- Inpainting Example 1 (A13) -->
+    <h4>Inpainting Example 1</h4>
+    <div class="grid two">
+      <figure><img src="source/A13b.png"></figure>
+      <figure><img src="source/A13a.png"></figure>
+    </div>
+
+    <!-- Inpainting Example 2 (A14) -->
+    <h4>Inpainting Example 2</h4>
+    <div class="grid two">
+      <figure><img src="source/A14b.png"></figure>
+      <figure><img src="source/A14a.png"></figure>
+    </div>
+
+    <!-- Inpainting Example 3 (A15) -->
+    <h4>Inpainting Example 3</h4>
+    <div class="grid two">
+      <figure><img src="source/A15b.png"></figure>
+      <figure><img src="source/A15a.png"></figure>
+    </div>
+
+  <p class="hint">
+    Reflection: REPLACE_ME — comment on how well the inpainted regions blend with
+    the context and any common failure cases (texture mismatch, blurry seams, etc.).
+  </p>
+</section>
+
+  <!-- A.1.8 -->
+  <section id="a18">
+    <h3>Part A.1.8 — Visual Anagrams (Optical Illusions)</h3>
+
+    <p class="hint">
+      Each visual anagram is generated to satisfy one prompt when viewed upright,
+      and a different prompt when rotated 180°.
+    </p>
+
+    <!-- Pair 1: A16 -->
+    <h4>Prompt Pair 1</h4>
+    <pre>
+  Upright prompt:  an oil painting of an old man
+  Flipped prompt:  an oil painting of people around a campfire
+    </pre>
+    <div class="grid two">
+      <figure><img src="source/A16a.png"></figure>
+      <figure><img src="source/A16b.png"></figure>
+    </div>
+
+    <!-- Pair 2: A17 -->
+    <h4>Prompt Pair 2</h4>
+    <pre>
+  Upright prompt:  a photo of a man
+  Flipped prompt:  a photo of a dog
+    </pre>
+    <div class="grid two">
+      <figure><img src="source/A17a.png"></figure>
+      <figure><img src="source/A17b.png"></figure>
+    </div>
+
+    <!-- Pair 3: A18 -->
+    <h4>Prompt Pair 3</h4>
+    <pre>
+  Upright prompt:  a man wearing a hat
+  Flipped prompt:  a photo of a dog
+    </pre>
+    <div class="grid two">
+      <figure><img src="source/A18a.png"></figure>
+      <figure><img src="source/A18b.png"></figure>
+    </div>
+
+    <p class="hint">
+      Reflection: REPLACE_ME — comment on which pair is most convincing in both orientations,
+      and what visual ambiguities (texture/lighting/shapes) make the illusion work or fail.
+    </p>
+  </section>
+
+<!-- A.1.9 -->
+<section id="a19">
+  <h3>Part A.1.9 — Hybrid Images</h3>
+  <!-- Hybrid 1 -->
+  <h4>Hybrid Pair 1</h4>
+  <pre>
+Low-frequency prompt:   a man wearing a hat
+High-frequency prompt:  a photo of a dog
+  </pre>
+  <div class="grid one">
+    <figure><img src="source/A19a.png"></figure>
+  </div>
+
+  <!-- Hybrid 2 -->
+  <h4>Hybrid Pair 2</h4>
+  <pre>
+Low-frequency prompt:   a lithograph of waterfalls
+High-frequency prompt:  a photo of a dog
+  </pre>
+  <div class="grid one">
+    <figure><img src="source/A19b.png"></figure>
+  </div>
+
+  <!-- Hybrid 3 -->
+  <h4>Hybrid Pair 3</h4>
+  <pre>
+Low-frequency prompt:   a lithograph of waterfalls
+High-frequency prompt:  a lithograph of a skull
+  </pre>
+  <div class="grid one">
+    <figure><img src="source/A19c.png"></figure>
+  </div>
+</section>
+
+<!-- ===================== Part B ===================== -->
+    <section id="b0">
+      <h3>Part B — Flow Matching from Scratch (MNIST)</h3>
+      <p class="hint">
+        In Part B, I trained my own UNet-based denoiser and evaluated it on MNIST, including
+        out-of-distribution noise levels and pure-noise denoising as a generative task.
+      </p>
+    </section>
+
+    <!-- B1 -->
+    <section id="b1">
+      <h3>Noise / Forward Process</h3>
+      <p class="hint">
+        We generate noisy inputs using <code>z = x + σ·ε</code> where <code>ε ~ N(0, I)</code>. As σ increases, the digit structure
+        becomes less recognizable and approaches pure Gaussian noise.
+      </p>
+      <div class="grid one">
+        <figure><img src="source/B1.png"></figure>
+      </div>
+      <p class="hint">
+        <b>Observation:</b> At small σ, edges and strokes remain visible; at large σ, the signal-to-noise ratio drops and the image
+        becomes dominated by high-frequency noise, making denoising much harder.
+      </p>
+    </section>
+
+    <!-- B2 -->
+    <section id="b2">
+      <h3>Training Loss Curve (σ = 0.5)</h3>
+      <p class="hint">
+        I trained an unconditional UNet denoiser with a fixed noise level (σ = 0.5). The loss decreases steadily as the model learns
+        to map noisy digits back toward clean targets under an MSE objective.
+      </p>
+      <div class="grid one">
+        <figure><img src="source/B2.png"></figure>
+      </div>
+      <p class="hint">
+        <b>Notes:</b> If the curve plateaus early, it usually indicates limited capacity/optimization or that the model has learned a
+        “mean” reconstruction; continued improvements often correlate with sharper stroke recovery and fewer artifacts.
+      </p>
+    </section>
+
+    <!-- B3a -->
+    <section id="b3a">
+      <h3>Denoising Performance After 1 Epoch</h3>
+      <div class="grid one">
+        <figure><img src="source/B3a.png"></figure>
+      </div>
+    </section>
+
+    <!-- B3b -->
+    <section id="b3b">
+      <h3>Denoising Performance After 5 Epochs</h3>
+      <p class="hint">
+        After 5 epochs, reconstruction does not look much different from epoch 1
+      </p>
+      <div class="grid one">
+        <figure><img src="source/B3b.png"></figure>
+      </div>
+    </section>
+
+    <!-- B4 -->
+    <section id="b4">
+      <h3>Out-of-Distribution Noise Testing</h3>
+      <p class="hint">
+        The denoiser was trained at σ = 0.5. Here I evaluate the same trained model on a fixed test digit while varying σ across a range.
+        This tests robustness to noise levels the model did not explicitly train on.
+      </p>
+      <div class="grid one">
+        <figure><img src="source/B4.png"></figure>
+      </div>
+      <p class="hint">
+        <b>Observation:</b> Performance is best near the training σ. At lower σ, the model may over-smooth (removing useful detail); at higher σ,
+        the input contains too little signal and the output can drift toward generic “average digit” shapes.
+      </p>
+    </section>
+
+    <!-- B6 -->
+    <section id="b6">
+      <h3>Training Loss Curve (Denoising Pure Noise)</h3>
+      <p class="hint">
+        To turn denoising into a generative task, I trained the same UNet to map pure Gaussian noise (no underlying digit) toward the MNIST
+        data distribution under MSE loss.
+      </p>
+      <div class="grid one">
+        <figure><img src="source/B6.png"></figure>
+      </div>
+      <p class="hint">
+        <b>Notes:</b> Training is harder than σ = 0.5 denoising because the input contains no digit signal; the model must rely entirely on the
+        learned prior encoded in its parameters.
+      </p>
+    </section>
+
+    <!-- B5 -->
+    <section id="b5">
+      <h3>Performance on Pure Noise (Samples)</h3>
+      <p class="hint">
+        Below are denoising results when starting from pure noise. Under an MSE objective, the optimal prediction tends toward a “centroid-like”
+        average of plausible training examples, so outputs often look like blurry prototypical digits or mixtures of multiple digit classes rather
+        than crisp, diverse samples.
+      </p>
+      <div class="grid one">
+        <figure><img src="source/B5.png"></figure>
+      </div>
+    </section>
+
+    <!-- B2.2 -->
+<section id="b22">
+  <h3>Part B2.2 — Time-Conditioned UNet</h3>
+
+  <p class="hint">
+    In this section, we train a UNet that is explicitly conditioned on the diffusion
+    timestep, allowing the model to learn how to denoise images at different noise
+    levels and enabling iterative sampling from pure noise.
+  </p>
+
+  <!-- B7 -->
+  <h4>Training Loss Curve (Time-Conditioned UNet)</h4>
+  <div class="grid one">
+    <figure>
+      <img src="source/B7.png">
+    </figure>
+  </div>
+
+  <!-- B8 -->
+  <h4>Sampling Results</h4>
+  <div class="grid three">
+    <figure><img src="source/B8a.png"></figure>
+    <figure><img src="source/B8b.png"></figure>
+    <figure><img src="source/B8c.png"></figure>
+  </div>
+</section>
+
+<!-- B2.3 -->
+<section id="b23">
+  <h3>Part B2.3 — Class-Conditioned UNet</h3>
+  <!-- B9 -->
+  <h4>Training Loss Curve (Class-Conditioned UNet)</h4>
+  <div class="grid one">
+    <figure>
+      <img src="source/B9.png">
+    </figure>
+  </div>
+
+  <p class="hint">
+    The loss decreases over training, suggesting the model learns to use both timestep
+    and class information for denoising. Compared to the unconditional model, conditioning
+    typically improves structure and class consistency in generated samples.
+  </p>
+
+  <!-- B10 -->
+  <h4>Class-Conditioned Sampling Results</h4>
+  <div class="grid three">
+    <figure><img src="source/B10a.png"></figure>
+    <figure><img src="source/B10b.png"></figure>
+    <figure><img src="source/B10c.png"></figure>
+  </div>
+</section>
+
+<!-- B2.4 -->
+<section id="b24">
+  <h3>Part B2.4 — UNet Without Scheduler</h3>
+  <!-- B11 -->
+  <h4>Sampling Results (No Scheduler)</h4>
+  <div class="grid three">
+    <figure><img src="source/B11a.png"></figure>
+    <figure><img src="source/B11b.png"></figure>
+    <figure><img src="source/B11c.png"></figure>
+  </div>
+</section>
+
+    <footer>
+      © 2025 REPLACE_ME • CS180 Project 5A • Plain HTML/CSS
+    </footer>
+  </main>
+</body>
+</html>
